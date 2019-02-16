@@ -1,0 +1,51 @@
+StateName,SqMiles,Abbrev,Region
+Alabama,50750,AL,South
+Alaska,570374,AK,West
+Arizona,113642,AZ,West
+Arkansas,52075,AR,South
+California,155973,CA,West
+Colorado,103730,CO,West
+Connecticut,4845,CT,Northeast
+Delaware,1955,DE,South
+Florida,53997,FL,South
+Georgia,57919,GA,South
+Hawaii,6423,HI,West
+Idaho,82751,ID,West
+Illinois,55593,IL,Midwest
+Indiana,35870,IN,Midwest
+Iowa,55875,IA,Midwest
+Kansas,81823,KS,Midwest
+Kentucky,39732,KY,South
+Louisiana,43566,LA,South
+Maine,30865,ME,Northeast
+Maryland,9775,MD,South
+Massachusetts,7838,MA,Northeast
+Michigan,56539,MI,Midwest
+Minnesota,79617,MN,Midwest
+Mississippi,46914,MS,South
+Missouri,68898,MO,Midwest
+Montana,145556,MT,West
+Nebraska,76878,NE,Midwest
+Nevada,109806,NV,West
+New Hampshire,8969,NH,Northeast
+New Jersey,7419,NJ,Northeast
+New Mexico,121365,NM,West
+New York,47224,NY,Northeast
+North Carolina,48718,NC,South
+North Dakota,68994,ND,Midwest
+Ohio,40953,OH,Midwest
+Oklahoma,68679,OK,South
+Oregon,96003,OR,West
+Pennsylvania,44820,PA,Northeast
+Rhode Island,1045,RI,Northeast
+South Carolina,30111,SC,South
+South Dakota,75898,SD,Midwest
+Tennessee,41220,TN,South
+Texas,261914,TX,South
+Utah,82168,UT,West
+Vermont,9249,VT,Northeast
+Virginia,39598,VA,South
+Washington,66582,WA,West
+West Virginia,24087,WV,South
+Wisconsin,54314,WI,Midwest
+Wyoming,97105,WY,West
