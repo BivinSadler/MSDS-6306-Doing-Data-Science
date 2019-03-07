@@ -1,0 +1,261 @@
+---
+title: "UNIT 9 Live Session"
+author: "Bivin"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Activity 1
+# Generate Data and show properties and assumptions of simple linear regression
+
+```{r}
+
+x_1 = rnorm(70000,2,1) #normal distribution of explanatory variable ... not an assumption of regression
+hist(x_1,col = "grey") #histogram of EV
+true_error = rnorm(1000,0,2) #generating random error ~ N(0,2)
+true_beta_0 = 1.1 #Beta_0
+true_beta_1 = -8.2 #Beta_1   y = 1.1 + -8.2*x_1 + e    such that e~N(0,2)
+
+y = true_beta_0 + true_beta_1*x_1 + true_error #Generating Repsonses...
+
+hist(y) #view distribuion of Repsonse.... not an assumption of regresssion 
+
+plot(x_1,y, pch = 20, col = "red") #scatter plot of y versus x_1
+
+df = data.frame(x_1 = x_1, y = y) #create a dataframe to use in lm function 
+
+df = data.frame(x_1 = x_1, y = y)
+
+df = df[order(df$x_1),]
+
+fit = lm(y~x_1,data = df) # fit the model to get Beta_hat_0 and Beta_hat_1
+summary(fit) # view the parameter estimate table
+
+confint(fit)
+
+preds = predict(fit)
+head(preds)
+
+lines(df$x,preds,type = "l",lwd = 4)
+
+
+#Look at distribution of ys for a cross section of xs (conditiona on the xs).
+df %>% filter(x_1 >2.1 & x_1 < 2.2) %>% ggplot(aes(x = y)) + geom_histogram()
+
+#Look at the residuals for a cross section of the xs (conditional on the xs). 
+df$resids = fit$residuals
+df %>% filter(x_1 >.3 & x_1 < .35) %>% ggplot(aes(x = resids)) + geom_histogram()
+#standard deviation of residuals.  
+sd((df %>% filter(x_1 >.3 & x_1 < .35))$resids)
+
+```
+
+
+##Cross Validation Linear regression model: y = 1.1 - 1.2*x_1 + 4*x_2
+# We will randomly split the data into a training set (70%) and test set (30%)
+# We will fit the model on the training set and assess its performance by how well it recovers the y's in the test set.
+# The loss function will be the MSE .. mean square error
+```{r}
+
+MSEholderTrain1 = c()
+MSEholderTest1 = c()
+MSEholderTrain2 = c()
+MSEholderTest2 = c()
+
+samplesize = 50
+x_1 = rnorm(samplesize,0,3)
+x_2 = x_1^2
+
+hist(x_1)
+
+
+#parameter setting ... these are the actual parameters that you would not know in a real world setting
+true_beta_0 = 1.1
+true_beta_1 = -1.2
+true_beta_2 = 4
+
+# error ~ N(0,2)  therefore Var(error) = 4
+true_error = rnorm(samplesize,0,2) #noise  
+
+#Generate Repsonses
+
+
+#Degree 1 Model
+y1 = true_beta_0 + true_beta_1*x_1 + true_error
+
+#plot / Visualize
+plot(x_1, y1)
+
+
+#Quadratic Model / Degree 2 Model
+#y1 = true_beta_0 + true_beta_1*x_1 + true_beta_2*x_2 + true_error
+
+#plot / Visualize
+#plot(x_1, y1)
+
+
+# Make a dataframe to fit the model
+df1 = data.frame(x_1 = x_1, x_2 = x_2, y1 = y1)
+
+#Divide into training and test set ... this one is 75% training 25% test
+train_perc = .6
+train_indices = sample(seq(1,samplesize,by = 1), train_perc*samplesize)
+train1 = df1[train_indices,]
+test1 = df1[-train_indices,]
+
+#Fit the Deg 1 Model
+fitTrain1 = lm(y1~x_1, data = train1)
+#How well did the method recover the true parameter values (intercept and slope).
+summary(fitTrain1)
+# These are the predictions of the model on the data that were used to fit the model.
+predsTrain1 = predict(fitTrain1)
+train1$preds = predsTrain1
+train1
+# These are the predictions of the model on the data that were NOT used to fit the model.
+# This is a better measure of how the model will perform in real life
+predsTest1 = predict(fitTrain1, newdata = test1)
+test1$preds = predsTest1
+test1
+
+# Calculation of the MSE for the training set
+MSEholderTrain1 = sum((predsTrain1 - train1$y1)^2)/(length(train1$y1)-2)
+# Calculation of the MSE for the Test set
+MSEholderTest1 = sum((predsTest1 - test1$y1)^2)/(length(test1$y1)-2)
+
+MSEholderTrain1
+MSEholderTest1
+
+
+#Fit the Deg 2 Model
+fitTrain2 = lm(y1~x_1+x_2, data = train1)
+#Check out the parameter estimates... hopefull beta_hat2 is close to zero.
+summary(fitTrain2)
+# These are the predictions of the model on the data that were used to fit the model.
+predsTrain2 = predict(fitTrain2)
+# These are the predictions of the model on the data that were NOT used to fit the model.
+# This is a better measure of how the model will perform in real life
+predsTest2 = predict(fitTrain2, newdata = test1)
+
+
+# Calculation of the MSE for the training set
+MSEholderTrain2 = sum((predsTrain2 - train1$y1)^2)/(length(train1$y1)-3)
+# Calculation of the MSE for the Test set
+MSEholderTest2 = sum((predsTest2 - test1$y1)^2)/(length(test1$y1)-3)
+
+
+
+MSEholderTrain2
+MSEholderTest2
+
+#summary(fitTrain1)
+#summary(fitTrain2)
+```
+
+
+
+
+
+##Cross Validation Linear regression model: y = 1.1 - 1.2*x_1 + 4*x_2
+# We will randomly split the data into a training set (70%) and test set (30%)
+# We will fit the model on the training set and assess its performance by how well it recovers the y's in the test set.
+# The loss function will be the MSE .. mean square error
+# We will do this for different sample sizes 50, 100, 150, 200, .... 500.
+# At the end we will make a plot of the the MSE v. sample size for 3 different models.  
+# As sample size gets larger, the 
+```{r}
+MSEholderTrain1 = c()
+MSEholderTest1 = c()
+MSEholderTrain2 = c()
+MSEholderTest2 = c()
+
+for( samplesize in seq(50,5000,50))
+{
+
+x_1 = rnorm(samplesize,0,3)
+x_2 = x_1^2
+
+#parameter setting ... these are the actual parameters that you would not know in a real world setting
+true_beta_0 = 1.1
+true_beta_1 = -1.2
+true_beta_2 = 2
+
+# error ~ N(0,2)  therefore Var(error) = 4
+true_error = rnorm(samplesize,0,2)  
+
+#Generate Repsonses 
+
+#Degree 1 Model
+y1 = true_beta_0 + true_beta_1*x_1 + true_error
+
+#Degree 2 Model / Quadratic
+#y1 = true_beta_0 + true_beta_1*x_1 + true_beta_2*x_2 + true_error
+
+# Make a dataframe to fit the model
+df1 = data.frame(x_1 = x_1, x_2 = x_2, y1 = y1)
+
+#Divide into training and test set ... this one is 75% training 25% test
+train_perc = .75
+train_indices = sample(seq(1,samplesize,length = samplesize),round(train_perc*samplesize))
+train1 = df1[train_indices,]
+test1 = df1[-train_indices,]
+
+#Fit the Deg 1 Model
+fitTrain1 = lm(y1~x_1, data = train1)
+# These are the predictions of the model on the data that were used to fit the model.
+predsTrain1 = predict(fitTrain1)
+# These are the predictions of the model on the data that were NOT used to fit the model.
+# This is a better measure of how the model will perform in real life
+predsTest1 = predict(fitTrain1, newdata = test1)
+
+
+# Calculation of the MSE for the training set
+MSEholderTrain1[samplesize/50] = sum((predsTrain1 - train1$y1)^2)/(length(train1$y1) - 2)
+# Calculation of the MSE for the Test set
+MSEholderTest1[samplesize/50] = sum((predsTest1 - test1$y1)^2)/(length(test1$y1) - 2)
+
+MSEholderTrain1
+MSEholderTest1
+
+
+#Fit the Deg 2 model
+fitTrain2 = lm(y1~x_1 + x_2, data = train1)
+# These are the predictions of the model on the data that were used to fit the model.
+predsTrain2 = predict(fitTrain2)
+# These are the predictions of the model on the data that were NOT used to fit the model.
+# This is a better measure of how the model will perform in real life
+predsTest2 = predict(fitTrain2, newdata = test1)
+
+# Calculation of the MSE for the training set
+MSEholderTrain2[samplesize/50] = sum((predsTrain2 - train1$y1)^2)/(length(train1$y1) - 3)
+# Calculation of the MSE for the Test set
+MSEholderTest2[samplesize/50] = sum((predsTest2 - test1$y1)^2)/(length(test1$y1) - 3)
+
+MSEholderTrain2
+MSEholderTest2
+
+}
+
+#plot of MSE Test of Deg 1 Model (Black) versus Deg 2 Model (Blue) for varying sample sizes from 50 to 500.
+par(mfrow = c(1,1))
+plot(seq(50,5000,50), MSEholderTest1, ylim = c(0,10000),type = "l")
+lines(seq(50,5000,50),MSEholderTest2, ylim = c(0,10000),type = "l", col = "blue")
+
+#Compares Training to Test
+par(mfrow = c(1,1))
+plot(seq(50,5000,50), MSEholderTrain1, ylim = c(0,20),type = "l")
+lines(seq(50,5000,50),MSEholderTest1, ylim = c(0,20),type = "l", col = "blue")
+
+MSEholderTrain1
+MSEholderTest1
+```
+
+
+
+
+
+
+
+
