@@ -1,4 +1,11 @@
 ## UNIT 12 LIVE SESSION! ##
+
+#Website to update airline passenger numbers: 
+
+#https://bitre.gov.au/statistics/aviation/domestic.aspx
+#Great Source of DATA!!!!  QILK!!! DATAMARKET
+#https://datamarket.com/data/set/14lt/air-transport-passengers-carried#!ds=14lt!gmr=28&display=line
+
 library(fpp)
 
 # 1. SES MODEL FOR AUS AIR 
@@ -54,11 +61,16 @@ fit4h = holt(air, alpha = .8, beta = .2, damped = TRUE, initial = "simple", expo
 lines(fitted(fit4h), col = "cyan", type= "o")
 lines(fit4h$mean,col = "cyan", type= "o")
 
-
+# with implicit Test set... it figures out by the time which are training and which are test. 
 accuracy(fit1h, ausair)
 accuracy(fit2h, ausair)
 accuracy(fit3h, ausair)
 
+#with explicit Test set
+airTest = window(ausair, start = 2005)
+accuracy(fit1h, airTest)
+accuracy(fit2h, airTest)
+accuracy(fit3h, airTest)
 
 air2008 = window(ausair, start = 1990, end = 2009)
 points(air2008, type = "o")
@@ -67,8 +79,8 @@ points(air2008, type = "o")
 
 #2.1 UP TO DATE! ######
 
-ausair2 = read.csv("/Users/bivin/Desktop/OLD COMPUTER ARCHIVES/KadAfrica/MSDS/DDS/MSDS 6306/UNIT 12/ausair.csv",header = TRUE)
-
+ausair2 = read.csv("/Users/bivin/Desktop/OLD COMPUTER ARCHIVES/KadAfrica/MSDS/DDS/MSDS 6306 Spring 2019/UNIT 12/ausair.csv",header = TRUE)
+#ausair2$Passengers = ausair2$Passengers/1000000
 ausair2ts = ts(ausair2$Passengers,start = c(1970,1), frequency = 1)
 
 #Holt's Linear Trend Model
@@ -78,7 +90,7 @@ fit2h = holt(air, alpha = .8, beta = .2, initial = "simple", exponential = TRUE,
 fitted(fit1h)
 fit1h$mean
 
-plot(air,ylab = "Airline Passegners", xlab = "Year", type = "o", xlim = c(1990, 2017),ylim = c(15,75))
+plot(air,ylab = "Airline Passegners", xlab = "Year", type = "o", xlim = c(1990, 2017),ylim = c(15,100))
 lines(fitted(fit1h),col = "blue", type= "o")
 lines(fitted(fit2h), col = "red", type= "o")
 lines(fit1h$mean, col = "blue", type= "o")
@@ -97,7 +109,7 @@ accuracy(fit1h, ausair)
 accuracy(fit2h, ausair)
 accuracy(fit3h, ausair)
 
-points(ausair2, type = "o")
+points(ausair2ts, type = "o")
 
 #Ensemble Model
 lines((fit1h$mean+fit2h$mean+fit3h$mean)/3,col = "brown",type = "o")
@@ -106,13 +118,11 @@ lines((fit1h$mean+fit2h$mean)/2,col = "purple",type = "o")
 
 #2.2 Plot it using dygraph
 library(dygraphs)
+library(xts)
 ausair2 = read.csv("/Users/bivin/Desktop/OLD COMPUTER ARCHIVES/KadAfrica/MSDS/DDS/MSDS 6306/UNIT 12/ausair.csv",header = TRUE)
 ausair2$TheYear2 = as.Date(ausair2$TheYear,format="%Y-%d-%m")
 xss = xts(ausair2$Passengers,ausair2$TheYear2)
 dygraph(xss) %>% dyRangeSelector(height = 100)
-
-
-
 
 
 
@@ -139,30 +149,51 @@ accuracy(fit2s,austourists)
 points(austourists, type = "o")
 
 
+#Example creating ts object
+df = data.frame(sales = c(3,6,9,11,3,8,8,4,5,8,6,9))
+
+dfts = ts(df$sales,start = c(2018,3), frequency = 4)
+dfts
+
+
+
+
 
 
 # Airline data from TSWGE ... Classic
 
 airline = read.csv("/Users/bivin/Desktop/OLD COMPUTER ARCHIVES/KadAfrica/MSDS/DDS/MSDS 6306/UNIT 12/AirlinePasngr.csv",header = TRUE)
 
+plot(airline$Passengers,type = "l")
+
+
 airlineTS = ts(airline$Passengers, start = c(1949,1),frequency=12)
 airlineTS
 
-airlineTS1 = window(airlineTS, end = 1957)
+airlineTS1 = window(airlineTS, end = c(1956,12))
 
-fit1s = hw(airlineTS1,seasonal = "additive",h = 35, alpha = .1)
-fit2s = hw(airlineTS1,seasonal = "multiplicative",h = 35)
+fit1s = hw(airlineTS1,seasonal = "additive",h = 48, alpha = .1)
+fit2s = hw(airlineTS1,seasonal = "multiplicative",h = 48)
 
-plot(airlineTS1,ylab = "Classic Airline Data", xlab = "Time", type = "o", xlim = c(1949,1961), ylim = c(100,500))
+plot(airlineTS1,ylab = "Classic Airline Data", xlab = "Time", type = "o", xlim = c(1949,1961), ylim = c(100,600))
 lines(fitted(fit1s),col = "blue", type= "o")
 lines(fitted(fit2s), col = "red", type= "o")
 
 lines(fit1s$mean, col = "purple", type= "o")
 lines(fit2s$mean,col = "red", type= "o")
 
-accuracy(fit1s,airlineTS)
-accuracy(fit2s,airlineTS)
+airlineTS1Test = window(airlineTS, start = c(1957))
+
+accuracy(fit1s,airlineTS1Test)
+accuracy(fit2s,airlineTS1Test)
 
 points(airlineTS, type = "o")
+
+#Sunspot and Melanoma Data
+sunMel = read.csv("/Users/bivin/Desktop/OLD COMPUTER ARCHIVES/KadAfrica/MSDS/DDS/MSDS 6306/UNIT 12/Melanoma_Sunspot.csv",header = TRUE)
+
+
+
+
 
 
