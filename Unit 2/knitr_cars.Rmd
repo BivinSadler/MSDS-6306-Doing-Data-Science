@@ -48,8 +48,8 @@ Now flip it!
 
 <!--
 TODO: Assignment 2: 3B, complete the following scatter plot:
-x axis is pressure, y axis is temperature,
-Label the x axis as "Pressure" and the y axis as "Temperature", 
+x axis is temperature, y axis is pressure,
+Label the x axis as "Temperature" and the y axis as "Pressure", 
 Title the graph as "Pressure vs Temperature"
 -->
 
