@@ -25,7 +25,7 @@ Blake and Phillip: Unit 4
 David S. and Jenna: Unit 5  
 David J. and Jonathan: Unit 6  
 Unit 7: Individual Meetings  
-Unit 8  Individual Meetings 
+Unit 8  Individual Meetings   
 Reannan and Shawn: Unit 9  
 Shawn and Allison: Unit 10  
 Christian and Saloni: Unit 11  
