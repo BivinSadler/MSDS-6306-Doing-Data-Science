@@ -1,11 +1,17 @@
 ---
-  title: "Old Faithful Initial"
+title: "Old Faithful Initial"
 author: "Bivin"
 date: "4/4/2019"
 output: html_document
 runtime: shiny
 ---
-  
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo = FALSE}
+
 library(shiny)
 
 ui <- fluidPage(
@@ -48,18 +54,18 @@ server <- function(input, output) {
   # 2. Its output type is a plot
   output$distPlot <- renderPlot({
     
-    
+
     x    <- faithful$waiting
     bins <- seq(min(x), max(x), length.out = input$bins + 1)
     
     hist(x, breaks = bins, col = "#75AADB", border = "white",
          xlab = "Waiting time to next eruption (in mins)",
          main = "Histogram of waiting times")
-    
+ 
   })
   
 }
 
 shinyApp(ui, server)
 
-
+```
